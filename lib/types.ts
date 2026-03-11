@@ -2,7 +2,7 @@ export type Member = {
   id: string
   first_name: string
   last_name: string
-  email: string          // admin-only — never rendered in public UI
+  email?: string          // admin-only — never rendered in public UI
   role: string
   company_id: string | null
   city: string
