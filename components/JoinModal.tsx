@@ -110,7 +110,11 @@ export default function JoinModal({ onClose, companies }: Props) {
 
       setStep('success')
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.')
+      const msg =
+        e instanceof Error
+          ? e.message
+          : (e as { message?: string })?.message ?? 'Something went wrong. Please try again.'
+      setError(msg)
     } finally {
       setLoading(false)
     }

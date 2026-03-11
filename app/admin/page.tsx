@@ -55,7 +55,7 @@ export default function AdminPage() {
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
         <div style={{ background: 'white', border: '1.5px solid var(--border)', borderRadius: 16, padding: 40, width: 360 }}>
           <div style={{ fontFamily: 'var(--font-display)', fontSize: 24, marginBottom: 6 }}>Admin</div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--muted)', marginBottom: 24 }}>The Network · Directory management</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--muted)', marginBottom: 24 }}>Toronto Tech Brothers · Directory management</div>
           <div className="form-group">
             <label className="form-label">Password</label>
             <input
@@ -78,7 +78,7 @@ export default function AdminPage() {
       <header className="header">
         <div className="header-inner">
           <div className="wordmark">
-            <span className="wordmark-main">The Network</span>
+            <span className="wordmark-main">Toronto Tech Brothers</span>
             <span className="wordmark-sub">Admin · Directory management</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
