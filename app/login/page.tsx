@@ -48,7 +48,7 @@ export default function LoginPage() {
       }}>
         <div style={{ marginBottom: '28px' }}>
           <div style={{ fontFamily: 'var(--font-display)', fontSize: '22px', letterSpacing: '-0.3px', marginBottom: '4px' }}>
-            The Network
+            Toronto Tech Brothers
           </div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'var(--muted)', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
             Muslim Entrepreneurs · Toronto

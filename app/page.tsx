@@ -90,7 +90,7 @@ export default function Home() {
       <header className="header">
         <div className="header-inner">
           <a className="wordmark" href="/" onClick={e => { e.preventDefault(); setPage('people') }}>
-            <span className="wordmark-main">The Network</span>
+            <span className="wordmark-main">Toronto Tech Brothers</span>
             <span className="wordmark-sub">Muslim Entrepreneurs · Toronto</span>
           </a>
           <div className="nav-tabs">
