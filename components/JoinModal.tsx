@@ -77,12 +77,12 @@ export default function JoinModal({ onClose, companies }: Props) {
 
       let company_id = form.company_id && form.company_id !== '__new__' ? form.company_id : null
       if (form.company_id === '__new__' && form.new_company_name.trim()) {
-        const { data: newCo, error: coErr } = await supabase
+        const newCoId = crypto.randomUUID()
+        const { error: coErr } = await supabase
           .from('companies')
-          .insert({ name: form.new_company_name.trim(), bio: '', status: 'pending' })
-          .select('id').single()
+          .insert({ id: newCoId, name: form.new_company_name.trim(), bio: '', status: 'pending' })
         if (coErr) throw coErr
-        company_id = newCo.id
+        company_id = newCoId
       }
 
       const { error: insertErr } = await supabase.from('members').insert({
