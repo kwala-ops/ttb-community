@@ -26,7 +26,6 @@ export default function CompanyModal({ company, team, coColor, memberColor, onCl
               <div className="co-modal-name">{company.name}</div>
               <div className="co-meta" style={{ marginTop: 6, marginBottom: 0 }}>
                 {company.industry && <span className="co-industry">{company.industry}</span>}
-                {company.stage    && <span className="co-stage">{company.stage}</span>}
               </div>
               {company.website && (
                 <a className="co-modal-website" href={company.website} target="_blank" rel="noopener noreferrer">
