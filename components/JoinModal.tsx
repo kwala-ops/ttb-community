@@ -4,13 +4,13 @@ import { useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Company } from '@/lib/types'
 
-const CITIES = ['Toronto','Mississauga','Ottawa','Waterloo','Hamilton','Remote','Other']
 const OPEN_TO = ['Hiring','Investing','Mentorship','Referrals','Coffee chats']
 const EXPERTISE_OPTIONS = [
   'AI/ML','Backend','Frontend','Mobile','Design','Product','Growth',
   'Marketing','Fintech','HealthTech','B2B SaaS','Consumer',
   'Venture Capital','Operations','Sales','Other',
 ]
+const INDUSTRIES = ['Fintech','HealthTech','Consumer','Design','Venture','Agency','SaaS','Other']
 
 type Props = { onClose: () => void; companies: Company[] }
 
@@ -18,13 +18,18 @@ export default function JoinModal({ onClose, companies }: Props) {
   const [step, setStep]       = useState<'form'|'success'>('form')
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState('')
-  const [photoFile, setPhotoFile]     = useState<File|null>(null)
+  const [photoFile, setPhotoFile]       = useState<File|null>(null)
   const [photoPreview, setPhotoPreview] = useState<string|null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
+  const [tagInput,    setTagInput]    = useState('')
+  const [openToInput, setOpenToInput] = useState('')
+
   const [form, setForm] = useState({
     first_name: '', last_name: '', email: '',
-    role: '', company_id: '', new_company_name: '', city: '',
+    role: '', company_id: '',
+    new_company_name: '', new_company_bio: '', new_company_website: '', new_company_industry: '',
+    city: '',
     bio_work: '', bio_personal: '',
     linkedin: '', twitter: '', instagram: '', github: '', website: '', contact: '',
     one_percent: '',
@@ -39,6 +44,14 @@ export default function JoinModal({ onClose, companies }: Props) {
       ...f,
       [k]: f[k].includes(v) ? f[k].filter(x => x !== v) : [...f[k], v],
     }))
+  }
+
+  function addCustom(k: 'tags' | 'open_to', val: string) {
+    const v = val.trim()
+    if (!v) return
+    setForm(f => ({ ...f, [k]: f[k].includes(v) ? f[k] : [...f[k], v] }))
+    if (k === 'tags') setTagInput('')
+    else setOpenToInput('')
   }
 
   function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
@@ -56,7 +69,7 @@ export default function JoinModal({ onClose, companies }: Props) {
     if (!form.last_name.trim())  return setError('Last name is required.')
     if (!form.email.trim())      return setError('Email is required.')
     if (!form.role.trim())       return setError('Role is required.')
-    if (!form.city)              return setError('City is required.')
+    if (!form.city.trim())       return setError('City is required.')
     if (!form.bio_work.trim())   return setError('Work bio is required.')
     if (!form.bio_personal.trim()) return setError('Personal bio is required.')
     if (!form.one_percent.trim()) return setError('The 1% question is required.')
@@ -77,12 +90,19 @@ export default function JoinModal({ onClose, companies }: Props) {
 
       let company_id = form.company_id && form.company_id !== '__new__' ? form.company_id : null
       if (form.company_id === '__new__' && form.new_company_name.trim()) {
-        const { data: newCo, error: coErr } = await supabase
+        const newCoId = crypto.randomUUID()
+        const { error: coErr } = await supabase
           .from('companies')
-          .insert({ name: form.new_company_name.trim(), bio: '', status: 'pending' })
-          .select('id').single()
+          .insert({
+            id:       newCoId,
+            name:     form.new_company_name.trim(),
+            bio:      form.new_company_bio.trim(),
+            website:  form.new_company_website.trim() || null,
+            industry: form.new_company_industry || null,
+            status:   'pending',
+          })
         if (coErr) throw coErr
-        company_id = newCo.id
+        company_id = newCoId
       }
 
       const { error: insertErr } = await supabase.from('members').insert({
@@ -91,7 +111,7 @@ export default function JoinModal({ onClose, companies }: Props) {
         email:        form.email.trim(),
         role:         form.role.trim(),
         company_id,
-        city:         form.city,
+        city:         form.city.trim(),
         bio_work:     form.bio_work.trim(),
         bio_personal: form.bio_personal.trim(),
         tags:         form.tags,
@@ -194,17 +214,22 @@ export default function JoinModal({ onClose, companies }: Props) {
                   <option value="__new__">+ Add a new company</option>
                 </select>
                 {form.company_id === '__new__' && (
-                  <input className="form-input" style={{ marginTop: 8 }} value={form.new_company_name} onChange={e => set('new_company_name', e.target.value)} placeholder="Company name" />
+                  <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <input className="form-input" value={form.new_company_name} onChange={e => set('new_company_name', e.target.value)} placeholder="Company name *" />
+                    <textarea className="form-textarea" value={form.new_company_bio} onChange={e => set('new_company_bio', e.target.value)} placeholder="What does the company do?" style={{ minHeight: 70 }} />
+                    <input className="form-input" value={form.new_company_website} onChange={e => set('new_company_website', e.target.value)} placeholder="Website (optional)" />
+                    <select className="form-select" value={form.new_company_industry} onChange={e => set('new_company_industry', e.target.value)}>
+                      <option value="">Industry (optional)</option>
+                      {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
+                    </select>
+                  </div>
                 )}
               </div>
 
               {/* City */}
               <div className="form-group">
                 <label className="form-label">City <span>*</span></label>
-                <select className="form-select" value={form.city} onChange={e => set('city', e.target.value)}>
-                  <option value="">Select city…</option>
-                  {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
+                <input className="form-input" value={form.city} onChange={e => set('city', e.target.value)} placeholder="Toronto, Vancouver, Remote…" />
               </div>
 
               {/* Work bio */}
@@ -243,6 +268,23 @@ export default function JoinModal({ onClose, companies }: Props) {
                       {t}
                     </label>
                   ))}
+                  {form.tags.filter(t => !EXPERTISE_OPTIONS.includes(t)).map(t => (
+                    <label key={t} className="checkbox-chip checked">
+                      <input type="checkbox" checked onChange={() => toggleArr('tags', t)} />
+                      {t}
+                    </label>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                  <input
+                    className="form-input"
+                    value={tagInput}
+                    onChange={e => setTagInput(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCustom('tags', tagInput) } }}
+                    placeholder="Add custom expertise…"
+                    style={{ flex: 1 }}
+                  />
+                  <button type="button" className="chip" onClick={() => addCustom('tags', tagInput)} style={{ whiteSpace: 'nowrap' }}>+ Add</button>
                 </div>
               </div>
 
@@ -256,6 +298,23 @@ export default function JoinModal({ onClose, companies }: Props) {
                       {o}
                     </label>
                   ))}
+                  {form.open_to.filter(o => !OPEN_TO.includes(o)).map(o => (
+                    <label key={o} className="checkbox-chip checked">
+                      <input type="checkbox" checked onChange={() => toggleArr('open_to', o)} />
+                      {o}
+                    </label>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                  <input
+                    className="form-input"
+                    value={openToInput}
+                    onChange={e => setOpenToInput(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCustom('open_to', openToInput) } }}
+                    placeholder="Add custom option…"
+                    style={{ flex: 1 }}
+                  />
+                  <button type="button" className="chip" onClick={() => addCustom('open_to', openToInput)} style={{ whiteSpace: 'nowrap' }}>+ Add</button>
                 </div>
               </div>
 
