@@ -48,7 +48,7 @@ export default function CompanyModal({ company, team, coColor, memberColor, onCl
                   <div key={m.id} className="team-member" onClick={() => onViewMember(m.id)}>
                     <Avatar member={m} size={32} color={memberColor(m.id)} />
                     <div>
-                      <div className="team-name">{m.name}</div>
+                      <div className="team-name">{m.first_name} {m.last_name}</div>
                       <div className="team-role">{m.role}</div>
                     </div>
                   </div>

@@ -112,7 +112,7 @@ export default function Home() {
               </div>
               <div className="hero-stats">
                 <div><div className="stat-num">{members.length || '—'}</div><div className="stat-label">Members</div></div>
-                <div><div className="stat-num">{[...new Set(members.map(m => m.city))].length || '—'}</div><div className="stat-label">Cities</div></div>
+                <div><div className="stat-num">{Array.from(new Set(members.map(m => m.city))).length || '—'}</div><div className="stat-label">Cities</div></div>
               </div>
             </div>
           </div>
@@ -192,7 +192,7 @@ export default function Home() {
               </div>
               <div className="hero-stats">
                 <div><div className="stat-num">{companies.length || '—'}</div><div className="stat-label">Companies</div></div>
-                <div><div className="stat-num">{[...new Set(companies.map(c => c.industry))].length || '—'}</div><div className="stat-label">Industries</div></div>
+                <div><div className="stat-num">{Array.from(new Set(companies.map(c => c.industry))).length || '—'}</div><div className="stat-label">Industries</div></div>
               </div>
             </div>
           </div>
