@@ -155,7 +155,7 @@ export default function AdminPage() {
             <div className="submission-header">
               <div>
                 <div className="submission-name">{c.name}</div>
-                <div className="submission-meta">{c.industry||'No industry'} · {c.stage||'No stage'} · {new Date(c.created_at).toLocaleDateString()}</div>
+                <div className="submission-meta">{c.industry||'No industry'} · {new Date(c.created_at).toLocaleDateString()}</div>
               </div>
               <span className={`status-badge status-${c.status}`}>{c.status}</span>
             </div>
