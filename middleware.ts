@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
 
   // Check for auth cookie
   const auth = request.cookies.get('site-auth')
-  if (auth?.value === process.env.NEXT_PUBLIC_SITE_PASSWORD) {
+  if (auth?.value === process.env.SITE_PASSWORD) {
     return NextResponse.next()
   }
 
